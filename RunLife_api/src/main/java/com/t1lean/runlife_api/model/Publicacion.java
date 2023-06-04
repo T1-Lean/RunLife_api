@@ -1,4 +1,4 @@
-package com.t1lean.runlife_api.model;
+/*package com.t1lean.runlife_api.model;
 import jakarta.persistence.*;
 import java.util.Date;
 
@@ -92,3 +92,4 @@ public class Publicacion {
         this.comunidad = comunidad;
     }
 }
+*/

@@ -1,4 +1,4 @@
-package com.t1lean.runlife_api.model;
+/*package com.t1lean.runlife_api.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -53,3 +53,4 @@ public class Calendario {
         this.evento = evento;
     }
 }
+*/

@@ -1,113 +1,44 @@
 package com.t1lean.runlife_api.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
+
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @ManyToOne
-    @JoinColumn(name = "comunidad_id")
-    private Comunidad comunidad;
-    private int usuarioId;
+    private Long id;
+
+    @Column(name = "nombre", length = 30, nullable = false)
     private String nombre;
+
+    @Column(name = "edad", nullable = false)
     private int edad;
+
+    @Column(name = "correo", length = 30, nullable = false)
     private String correo;
+
+    @Column(name = "contraseña", length = 30, nullable = false)
     private String contraseña;
+
+    @Column(name = "altura", nullable = false)
     private float altura;
+
+    @Column(name = "peso", nullable = false)
     private float peso;
+
+    @Column(name = "duracionTotal", nullable = false)
     private float duracionTotal;
+
+    @Column(name = "distanciaTotal", nullable = false)
     private float distanciaTotal;
 
-    // Constructores, getters y setters
-
-    // Constructor vacío
-    public Usuario() {
-    }
-
-    // Constructor con todos los campos excepto usuario Id
-    public Usuario(String nombre, int edad, String correo, String contraseña, float altura, float peso, float duracionTotal, float distanciaTotal) {
-        this.nombre = nombre;
-        this.edad = edad;
-        this.correo = correo;
-        this.contraseña = contraseña;
-        this.altura = altura;
-        this.peso = peso;
-        this.duracionTotal = duracionTotal;
-        this.distanciaTotal = distanciaTotal;
-    }
-
-    // Getters y setters de todos los campos
-
-    public int getUsuarioId() {
-        return usuarioId;
-    }
-
-    public void setUsuarioId(int usuarioId) {
-        this.usuarioId = usuarioId;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public int getEdad() {
-        return edad;
-    }
-
-    public void setEdad(int edad) {
-        this.edad = edad;
-    }
-
-    public String getCorreo() {
-        return correo;
-    }
-
-    public void setCorreo(String correo) {
-        this.correo = correo;
-    }
-
-    public String getContraseña() {
-        return contraseña;
-    }
-
-    public void setContraseña(String contraseña) {
-        this.contraseña = contraseña;
-    }
-
-    public float getAltura() {
-        return altura;
-    }
-
-    public void setAltura(float altura) {
-        this.altura = altura;
-    }
-
-    public float getPeso() {
-        return peso;
-    }
-
-    public void setPeso(float peso) {
-        this.peso = peso;
-    }
-
-    public float getDuracionTotal() {
-        return duracionTotal;
-    }
-
-    public void setDuracionTotal(float duracionTotal) {
-        this.duracionTotal = duracionTotal;
-    }
-
-    public float getDistanciaTotal() {
-        return distanciaTotal;
-    }
-
-    public void setDistanciaTotal(float distanciaTotal) {
-        this.distanciaTotal = distanciaTotal;
-    }
 }
