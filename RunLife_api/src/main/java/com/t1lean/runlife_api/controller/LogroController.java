@@ -62,18 +62,6 @@ public class LogroController {
         Logro logroActualizadoResult = logroRepository.save(logroExistente);
         return ResponseEntity.status(HttpStatus.OK).body(logroActualizadoResult);
     }
-    /*@PutMapping("/{logroId}/asignar-recompensa")
-    public ResponseEntity<Logro> asignarRecompensa(@PathVariable Long logroId, @RequestBody Recompensa recompensa) {
-        Logro logroExistente = logroRepository.findById(logroId)
-                .orElseThrow(() -> new ResourceNotFoundException("Logro no encontrado con el ID: " + logroId));
-
-        logroExistente.setRecompensa(recompensa);
-
-        Logro logroActualizado = logroRepository.save(logroExistente);
-        return ResponseEntity.status(HttpStatus.OK).body(logroActualizado);
-    }
-
-     */
     @PutMapping("/{logroId}/asignar-recompensa/{recompensaId}")
     public ResponseEntity<Logro> asignarRecompensaALogro(
             @PathVariable Long logroId, @PathVariable Long recompensaId) {
