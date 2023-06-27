@@ -41,4 +41,7 @@ public class Usuario {
     @Column(name = "distanciaTotal", nullable = false)
     private float distanciaTotal;
 
+    @Column(name = "estado", length = 20, nullable = false)
+    private String estado;
+
 }
