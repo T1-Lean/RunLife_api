@@ -1,14 +1,21 @@
 package com.t1lean.runlife_api.service.ServiceImpl;
 
+import com.t1lean.runlife_api.controller.dto.LoginRequest;
+import com.t1lean.runlife_api.controller.dto.SimpleUserDTO;
+import com.t1lean.runlife_api.exception.InvalidPasswordException;
 import com.t1lean.runlife_api.exception.ResourceNotFoundException;
 import com.t1lean.runlife_api.exception.UsuarioNotFoundException;
 import com.t1lean.runlife_api.exception.ValidationException;
 import com.t1lean.runlife_api.model.Usuario;
 import com.t1lean.runlife_api.repository.IUsuarioRepository;
 import com.t1lean.runlife_api.service.UsuarioService;
+
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
+
 import java.util.*;
 
 @Service
@@ -38,10 +45,6 @@ public class UsuarioServiceImpl implements UsuarioService {
             usuarioExistente.setCorreo(usuarioActualizado.getCorreo());
         }
 
-        if (usuarioActualizado.getContraseña() != null) {
-            usuarioExistente.setContraseña(usuarioActualizado.getContraseña());
-        }
-
         if (usuarioActualizado.getAltura() != 0) {
             usuarioExistente.setAltura(usuarioActualizado.getAltura());
         }
@@ -50,13 +53,35 @@ public class UsuarioServiceImpl implements UsuarioService {
             usuarioExistente.setPeso(usuarioActualizado.getPeso());
         }
 
+        if (usuarioActualizado.getPassword() != null) {
+            usuarioExistente.setPassword(usuarioActualizado.getPassword());
+        }
+
+        if (usuarioActualizado.getUsername() != null) {
+            usuarioExistente.setUsername(usuarioActualizado.getUsername());
+        }
+
         return usuarioRepository.save(usuarioExistente);
+    }
+
+    @Override
+    public Usuario authenticate(String username, String password) throws InvalidPasswordException {
+        Optional<Usuario> result = usuarioRepository.findByUsername(username);
+        if (result.isEmpty()) {
+            throw new UsuarioNotFoundException("El usuario no se ha encontrado");
+        }
+
+        Usuario usuario = result.get();
+        if (Objects.equals(usuario.getPassword(), password)) {
+            return usuario;
+        }
+        throw new InvalidPasswordException("La contraseña es incorrecta");
     }
 
     @Override
     public Usuario getUserById(Long id) {
         return usuarioRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con el ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con el ID proporcionado: " + id));
     }
 
     @Override
@@ -78,11 +103,17 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional
     public Usuario crearUsuario(Usuario usuario) {
-        validateEmployee(usuario);
+        Optional<Usuario> existingUser = usuarioRepository.findByUsername(usuario.getUsername());
+        if (existingUser.isPresent()) {
+            throw new ValidationException("El nombre de usuario ya está en uso");
+        }
+        else{
+        validateUsuario(usuario);
 
         usuario.setEstado("Activo");
         usuario.setDuracionTotal(0);
         usuario.setDistanciaTotal(0);
+        }
 
         return usuarioRepository.save(usuario);
     }
@@ -98,7 +129,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         return usuarioRepository.save(usuarioExistente);
     }
 
-    private void validateEmployee(Usuario usuario) {
+    private void validateUsuario(Usuario usuario) {
         if (usuario.getNombre() == null || usuario.getNombre().trim().isEmpty()) {
             throw new ValidationException("El nombre del empleado es obligatorio");
         }

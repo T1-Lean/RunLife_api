@@ -1,17 +1,13 @@
 package com.t1lean.runlife_api.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,14 +16,17 @@ public class Usuario {
     @Column(name = "nombre", length = 30, nullable = false)
     private String nombre;
 
+    @Column(name = "username", nullable = false)
+    private String username;
+
+    @Column(name = "password", nullable = false)
+    private String password;
+
     @Column(name = "edad", nullable = false)
     private int edad;
 
     @Column(name = "correo", length = 30, nullable = false)
     private String correo;
-
-    @Column(name = "contraseña", length = 30, nullable = false)
-    private String contraseña;
 
     @Column(name = "altura", nullable = false)
     private float altura;
