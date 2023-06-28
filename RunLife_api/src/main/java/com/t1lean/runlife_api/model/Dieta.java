@@ -1,4 +1,4 @@
-package com.t1lean.runlife_api.model;
+/*package com.t1lean.runlife_api.model;
 
 import jakarta.persistence.*;
 import jakarta.persistence.Entity;
@@ -79,3 +79,4 @@ public class Dieta {
         this.detallesDieta = detallesDieta;
     }
 }
+*/

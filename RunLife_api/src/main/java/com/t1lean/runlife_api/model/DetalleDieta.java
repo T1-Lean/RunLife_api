@@ -1,4 +1,4 @@
-package com.t1lean.runlife_api.model;
+/*package com.t1lean.runlife_api.model;
 
 import jakarta.persistence.*;
 
@@ -61,3 +61,4 @@ public class DetalleDieta {
         this.calorias = calorias;
     }
 }
+*/
