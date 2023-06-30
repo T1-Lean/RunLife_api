@@ -1,88 +1,75 @@
 package com.t1lean.runlife_api.controller;
+
 import com.t1lean.runlife_api.exception.ResourceNotFoundException;
-import com.t1lean.runlife_api.exception.ValidationException;
 import com.t1lean.runlife_api.model.Logro;
-import com.t1lean.runlife_api.model.Recompensa;
-import com.t1lean.runlife_api.repository.ILogroRepository;
-import com.t1lean.runlife_api.repository.IRecompensaRepository;
+import com.t1lean.runlife_api.service.LogroService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 
 import java.util.*;
-
 @RestController
-@RequestMapping("/logros")
+@RequestMapping("/runlife")
 public class LogroController {
-    private final ILogroRepository logroRepository;
-    private final IRecompensaRepository recompensaRepository;
+    private final LogroService logroService;
 
     @Autowired
-    public LogroController(ILogroRepository logroRepository, IRecompensaRepository recompensaRepository) {
-        this.logroRepository = logroRepository;
-        this.recompensaRepository = recompensaRepository;
+    public LogroController(LogroService logroService) {
+        this.logroService = logroService;
     }
 
-
-    @GetMapping
+    @GetMapping("/logros")
     public ResponseEntity<List<Logro>> getAllLogros() {
-        List<Logro> logros = logroRepository.findAll();
+        List<Logro> logros = logroService.getAllLogros();
         return ResponseEntity.ok(logros);
     }
 
-    @PostMapping
-    public ResponseEntity<Logro> createLogro(@RequestBody Logro logro) {
-        Logro nuevoLogro = logroRepository.save(logro);
+    @PostMapping("/logros/crearlogro")
+    public ResponseEntity<Logro> crearLogro(@RequestBody Logro logro) {
+        Logro nuevoLogro = logroService.crearLogro(logro);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoLogro);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/logros/buscarlogro/{id}")
     public ResponseEntity<Logro> getLogroById(@PathVariable Long id) {
-        Optional<Logro> optionalLogro = logroRepository.findById(id);
-
-        if (optionalLogro.isPresent()) {
-            Logro logro = optionalLogro.get();
+        Logro logro = logroService.getLogroById(id);
+        if (logro != null) {
             return ResponseEntity.ok(logro);
         } else {
             return ResponseEntity.notFound().build();
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Logro> updateLogro(@PathVariable Long id, @RequestBody Logro logroActualizado) {
-        Logro logroExistente = logroRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Logro no encontrado con el ID: " + id));
+    @GetMapping("/logros/buscarlogro/nombre")
+    public ResponseEntity<List<Logro>> getLogroByNombre(@RequestParam("nombre") String nombre) {
+        List<Logro> logros = logroService.getLogroByNombre(nombre);
+        if (!logros.isEmpty()) {
+            return ResponseEntity.ok(logros);
+        } else {
+            throw new ResourceNotFoundException("No se encontraron logros con el nombre: " + nombre);
+        }
+    }
 
-        logroExistente.setNombre(logroActualizado.getNombre());
-        logroExistente.setDescripcion(logroActualizado.getDescripcion());
-
-        Logro logroActualizadoResult = logroRepository.save(logroExistente);
+    @PutMapping("/logros/actualizarlogro/{id}")
+    public ResponseEntity<Logro> actualizarLogro(@PathVariable Long id, @RequestBody Logro logroActualizado) {
+        Logro logroActualizadoResult = logroService.actualizarLogro(id, logroActualizado);
         return ResponseEntity.status(HttpStatus.OK).body(logroActualizadoResult);
     }
-    @PutMapping("/{logroId}/asignar-recompensa/{recompensaId}")
+
+    @PutMapping("/logros/{logroId}/asignarrecompensa/{recompensaId}")
     public ResponseEntity<Logro> asignarRecompensaALogro(
             @PathVariable Long logroId, @PathVariable Long recompensaId) {
-        Logro logroExistente = logroRepository.findById(logroId)
-                .orElseThrow(() -> new ResourceNotFoundException("Logro no encontrado con el ID: " + logroId));
-
-        Recompensa recompensa = recompensaRepository.findById(recompensaId)
-                .orElseThrow(() -> new ResourceNotFoundException("Recompensa no encontrada con el ID: " + recompensaId));
-
-        logroExistente.setRecompensa(recompensa);
-
-        Logro logroActualizado = logroRepository.save(logroExistente);
+        Logro logroActualizado = logroService.asignarRecompensaALogro(logroId, recompensaId);
         return ResponseEntity.status(HttpStatus.OK).body(logroActualizado);
     }
 
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteLogro(@PathVariable Long id) {
-        logroRepository.deleteById(id);
+    @DeleteMapping("/logros/eliminarlogro/{id}")
+    public ResponseEntity<Void> eliminarLogro(@PathVariable Long id) {
+        logroService.eliminarLogro(id);
         return ResponseEntity.noContent().build();
     }
-
 }
+
 

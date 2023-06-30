@@ -1,9 +1,11 @@
 package com.t1lean.runlife_api.model;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -19,8 +21,5 @@ public class Recompensa {
 
     @Column(name = "descripcion", length = 100, nullable = false)
     private String descripcion;
-
-    @Column(name = "KmRequeridos", nullable = false)
-    private double kmRequeridos;
 
 }
