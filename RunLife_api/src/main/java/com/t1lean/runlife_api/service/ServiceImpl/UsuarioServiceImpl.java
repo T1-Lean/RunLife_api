@@ -1,30 +1,30 @@
 package com.t1lean.runlife_api.service.ServiceImpl;
 
-import com.t1lean.runlife_api.controller.dto.LoginRequest;
-import com.t1lean.runlife_api.controller.dto.SimpleUserDTO;
 import com.t1lean.runlife_api.exception.InvalidPasswordException;
 import com.t1lean.runlife_api.exception.ResourceNotFoundException;
 import com.t1lean.runlife_api.exception.UsuarioNotFoundException;
 import com.t1lean.runlife_api.exception.ValidationException;
+import com.t1lean.runlife_api.model.Rol;
 import com.t1lean.runlife_api.model.Usuario;
+import com.t1lean.runlife_api.repository.IRolRepository;
 import com.t1lean.runlife_api.repository.IUsuarioRepository;
 import com.t1lean.runlife_api.service.UsuarioService;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.*;
 
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
     private final IUsuarioRepository usuarioRepository;
+    private final IRolRepository rolRepository;
 
     @Autowired
-    public UsuarioServiceImpl(IUsuarioRepository usuarioRepository) {
+    public UsuarioServiceImpl(IUsuarioRepository usuarioRepository, IRolRepository rolRepository) {
         this.usuarioRepository = usuarioRepository;
+        this.rolRepository = rolRepository;
     }
 
     @Override
@@ -99,7 +99,6 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         return usuarios;
     }
-
     @Override
     @Transactional
     public Usuario crearUsuario(Usuario usuario) {
@@ -107,13 +106,16 @@ public class UsuarioServiceImpl implements UsuarioService {
         if (existingUser.isPresent()) {
             throw new ValidationException("El nombre de usuario ya está en uso");
         }
-        else{
+
         validateUsuario(usuario);
 
+        Rol rolUsuario = rolRepository.findByNombre("USUARIO")
+                .orElseThrow(() -> new ResourceNotFoundException("El rol 'USUARIO' no se encontró en la base de datos"));
+
+        usuario.setRol(rolUsuario);
         usuario.setEstado("Activo");
         usuario.setDuracionTotal(0);
         usuario.setDistanciaTotal(0);
-        }
 
         return usuarioRepository.save(usuario);
     }

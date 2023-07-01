@@ -2,12 +2,12 @@ package com.t1lean.runlife_api.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "usuario")
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,4 +43,7 @@ public class Usuario {
     @Column(name = "estado", length = 20, nullable = false)
     private String estado;
 
+    @ManyToOne
+    @JoinColumn(name = "rol_id")
+    private Rol rol;
 }
