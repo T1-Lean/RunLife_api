@@ -1,22 +1,18 @@
 package com.t1lean.runlife_api.service.ServiceImpl;
 
-import com.t1lean.runlife_api.controller.dto.LoginRequest;
-import com.t1lean.runlife_api.controller.dto.SimpleUserDTO;
-import com.t1lean.runlife_api.exception.InvalidPasswordException;
-import com.t1lean.runlife_api.exception.ResourceNotFoundException;
-import com.t1lean.runlife_api.exception.UsuarioNotFoundException;
-import com.t1lean.runlife_api.exception.ValidationException;
-import com.t1lean.runlife_api.model.Usuario;
-import com.t1lean.runlife_api.repository.IUsuarioRepository;
-import com.t1lean.runlife_api.service.UsuarioService;
+        import com.t1lean.runlife_api.exception.InvalidPasswordException;
+        import com.t1lean.runlife_api.exception.ResourceNotFoundException;
+        import com.t1lean.runlife_api.exception.UsuarioNotFoundException;
+        import com.t1lean.runlife_api.exception.ValidationException;
+        import com.t1lean.runlife_api.model.Usuario;
+        import com.t1lean.runlife_api.repository.IUsuarioRepository;
+        import com.t1lean.runlife_api.service.UsuarioService;
 
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
+        import jakarta.transaction.Transactional;
+        import org.springframework.beans.factory.annotation.Autowired;
+        import org.springframework.stereotype.Service;
 
-import java.util.*;
+        import java.util.*;
 
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
@@ -24,6 +20,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Autowired
     public UsuarioServiceImpl(IUsuarioRepository usuarioRepository) {
+
         this.usuarioRepository = usuarioRepository;
     }
 
@@ -32,6 +29,8 @@ public class UsuarioServiceImpl implements UsuarioService {
     public Usuario actualizarUsuario(Long id, Usuario usuarioActualizado) {
         Usuario usuarioExistente = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con el ID: " + id));
+
+        validateUpdate(usuarioActualizado, id);
 
         if (usuarioActualizado.getNombre() != null) {
             usuarioExistente.setNombre(usuarioActualizado.getNombre());
@@ -106,13 +105,12 @@ public class UsuarioServiceImpl implements UsuarioService {
         Optional<Usuario> existingUser = usuarioRepository.findByUsername(usuario.getUsername());
         if (existingUser.isPresent()) {
             throw new ValidationException("El nombre de usuario ya está en uso");
-        }
-        else{
-        validateUsuario(usuario);
+        } else {
+            validateUsuario(usuario);
 
-        usuario.setEstado("Activo");
-        usuario.setDuracionTotal(0);
-        usuario.setDistanciaTotal(0);
+            usuario.setEstado("Activo");
+            usuario.setDuracionTotal(0);
+            usuario.setDistanciaTotal(0);
         }
 
         return usuarioRepository.save(usuario);
@@ -131,11 +129,21 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     private void validateUsuario(Usuario usuario) {
         if (usuario.getNombre() == null || usuario.getNombre().trim().isEmpty()) {
-            throw new ValidationException("El nombre del empleado es obligatorio");
+            throw new ValidationException("El nombre del usuario es obligatorio");
         }
 
         if (usuario.getNombre().length() > 30) {
-            throw new ValidationException("El nombre del empleado no debe exceder los 30 caracteres");
+            throw new ValidationException("El nombre del usuario no debe exceder los 30 caracteres");
+        }
+    }
+
+    private void validateUpdate(Usuario usuarioActualizado, Long id) {
+
+        if (usuarioActualizado.getUsername() != null) {
+            Optional<Usuario> usuarioExistenteByUsername = usuarioRepository.findByUsername(usuarioActualizado.getUsername());
+            if (usuarioExistenteByUsername.isPresent() && !usuarioExistenteByUsername.get().getId().equals(id)) {
+                throw new ValidationException("El nombre de usuario ya está en uso");
+            }
         }
     }
 }
