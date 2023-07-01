@@ -1,7 +1,12 @@
 package com.t1lean.runlife_api.controller;
 
+import com.t1lean.runlife_api.controller.dto.EjercicioRequest;
+import com.t1lean.runlife_api.exception.CamposInvalidosException;
+import com.t1lean.runlife_api.exception.EjercicioExistenteException;
 import com.t1lean.runlife_api.model.Ejercicio;
 import com.t1lean.runlife_api.service.EjercicioService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -16,9 +21,18 @@ public class EjercicioController {
     }
 
     @PostMapping("/crearejercicio")
-    public ResponseEntity<Ejercicio> crearEjercicio(@RequestBody Ejercicio ejercicio) {
-        Ejercicio nuevoEjercicio = ejercicioService.crearEjercicio(ejercicio);
-        return ResponseEntity.ok(nuevoEjercicio);
+    public ResponseEntity<String> crearEjercicio(@Valid @RequestBody EjercicioRequest ejercicioRequest) {
+        try {
+            Ejercicio ejercicio = ejercicioService.agregarEjercicio(ejercicioRequest);
+            return ResponseEntity.ok("Ejercicio agregado correctamente");
+        } catch (EjercicioExistenteException e) {
+            return ResponseEntity.badRequest().body("El ejercicio ya existe en el sistema");
+        } catch (CamposInvalidosException e) {
+            return ResponseEntity.badRequest().body("Todos los campos obligatorios deben ser completados");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Ocurrió un error al agregar el ejercicio");
+        }
     }
 
     @GetMapping("/listarejercicios")
@@ -38,13 +52,20 @@ public class EjercicioController {
     }
 
     @PutMapping("/actualizarejercicio/{id}")
-    public ResponseEntity<Ejercicio> actualizarEjercicio(@PathVariable int id, @RequestBody Ejercicio ejercicio) {
+    public ResponseEntity<String> actualizarEjercicio(@PathVariable int id, @RequestBody Ejercicio ejercicio) {
         Ejercicio ejercicioExistente = ejercicioService.obtenerEjercicioPorId(id);
         if (ejercicioExistente != null) {
             ejercicioExistente.setNombre(ejercicio.getNombre());
             ejercicioExistente.setDescripcion(ejercicio.getDescripcion());
+            ejercicioExistente.setGrupoMuscular(ejercicio.getGrupoMuscular());
+            ejercicioExistente.setCategoriaEjercicio(ejercicio.getCategoriaEjercicio());
             Ejercicio ejercicioActualizado = ejercicioService.actualizarEjercicio(ejercicioExistente);
-            return ResponseEntity.ok(ejercicioActualizado);
+            if (ejercicioActualizado != null) {
+                return ResponseEntity.ok("Ejercicio actualizado correctamente");
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("Error al actualizar el ejercicio");
+            }
         } else {
             return ResponseEntity.notFound().build();
         }
