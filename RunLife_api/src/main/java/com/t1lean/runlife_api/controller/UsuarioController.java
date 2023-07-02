@@ -32,6 +32,7 @@ public class UsuarioController {
         Usuario usuario = usuarioService.actualizarUsuario(id, usuarioActualizado);
         return ResponseEntity.status(HttpStatus.OK).body(usuario);
     }
+
     @GetMapping("/usuarios/buscarusuario/{id}")
     public ResponseEntity<Usuario> getUserById(@PathVariable Long id) {
         Usuario usuario = usuarioService.getUserById(id);
