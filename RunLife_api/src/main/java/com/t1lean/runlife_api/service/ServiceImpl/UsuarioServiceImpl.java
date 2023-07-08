@@ -1,27 +1,35 @@
 package com.t1lean.runlife_api.service.ServiceImpl;
 
-        import com.t1lean.runlife_api.exception.InvalidPasswordException;
-        import com.t1lean.runlife_api.exception.ResourceNotFoundException;
-        import com.t1lean.runlife_api.exception.UsuarioNotFoundException;
-        import com.t1lean.runlife_api.exception.ValidationException;
-        import com.t1lean.runlife_api.model.Usuario;
-        import com.t1lean.runlife_api.repository.IUsuarioRepository;
-        import com.t1lean.runlife_api.service.UsuarioService;
+import com.t1lean.runlife_api.exception.InvalidPasswordException;
+import com.t1lean.runlife_api.exception.ResourceNotFoundException;
+import com.t1lean.runlife_api.exception.UsuarioNotFoundException;
+import com.t1lean.runlife_api.exception.ValidationException;
+import com.t1lean.runlife_api.model.Rol;
+import com.t1lean.runlife_api.model.Usuario;
+import com.t1lean.runlife_api.repository.IRolRepository;
+import com.t1lean.runlife_api.repository.IUsuarioRepository;
+import com.t1lean.runlife_api.service.UsuarioService;
 
-        import jakarta.transaction.Transactional;
-        import org.springframework.beans.factory.annotation.Autowired;
-        import org.springframework.stereotype.Service;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-        import java.util.*;
+import java.util.*;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
 
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
     private final IUsuarioRepository usuarioRepository;
+    private final IRolRepository rolRepository;
 
     @Autowired
-    public UsuarioServiceImpl(IUsuarioRepository usuarioRepository) {
-
+    public UsuarioServiceImpl(IUsuarioRepository usuarioRepository, IRolRepository rolRepository) {
         this.usuarioRepository = usuarioRepository;
+        this.rolRepository = rolRepository;
     }
 
     @Override
@@ -29,9 +37,9 @@ public class UsuarioServiceImpl implements UsuarioService {
     public Usuario actualizarUsuario(Long id, Usuario usuarioActualizado) {
         Usuario usuarioExistente = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con el ID: " + id));
-
-        validateUpdate(usuarioActualizado, id);
-
+      
+        validateUpdate(usuarioActualizado);
+      
         if (usuarioActualizado.getNombre() != null) {
             usuarioExistente.setNombre(usuarioActualizado.getNombre());
         }
@@ -98,20 +106,24 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         return usuarios;
     }
-
+  
     @Override
     @Transactional
     public Usuario crearUsuario(Usuario usuario) {
         Optional<Usuario> existingUser = usuarioRepository.findByUsername(usuario.getUsername());
         if (existingUser.isPresent()) {
             throw new ValidationException("El nombre de usuario ya está en uso");
-        } else {
-            validateUsuario(usuario);
-
-            usuario.setEstado("Activo");
-            usuario.setDuracionTotal(0);
-            usuario.setDistanciaTotal(0);
         }
+
+        validateUsuario(usuario);
+
+        Rol rolUsuario = rolRepository.findByNombre("USUARIO")
+                .orElseThrow(() -> new ResourceNotFoundException("El rol 'USUARIO' no se encontró en la base de datos"));
+
+        usuario.setRol(rolUsuario);
+        usuario.setEstado("Activo");
+        usuario.setDuracionTotal(0);
+        usuario.setDistanciaTotal(0);
 
         return usuarioRepository.save(usuario);
     }
@@ -129,11 +141,11 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     private void validateUsuario(Usuario usuario) {
         if (usuario.getNombre() == null || usuario.getNombre().trim().isEmpty()) {
-            throw new ValidationException("El nombre del usuario es obligatorio");
+            throw new ValidationException("El nombre del empleado es obligatorio");
         }
 
         if (usuario.getNombre().length() > 30) {
-            throw new ValidationException("El nombre del usuario no debe exceder los 30 caracteres");
+            throw new ValidationException("El nombre del empleado no debe exceder los 30 caracteres");
         }
     }
 
@@ -144,6 +156,7 @@ public class UsuarioServiceImpl implements UsuarioService {
             if (usuarioExistenteByUsername.isPresent() && !usuarioExistenteByUsername.get().getId().equals(id)) {
                 throw new ValidationException("El nombre de usuario ya está en uso");
             }
+
         }
     }
 }
