@@ -1,51 +1,31 @@
 package com.t1lean.runlife_api.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import jakarta.persistence.*;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
+@Table(name = "Ejercicio")
 public class Ejercicio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int ejercicioId;
+    private Long EjercicioId;
+
+    @Column(name = "nombre", length = 30, nullable = false)
     private String nombre;
+
+    @Column(name = "descripcion", length = 100, nullable = false)
     private String descripcion;
 
-    // Constructor vacío
-    public Ejercicio() {
-    }
+    @ManyToOne
+    @JoinColumn(name = "categoria_ejercicio_id")
+    private CategoriaEjercicio categoria;
 
-    // Constructor con todos los campos excepto ejercicioId
-    public Ejercicio(String nombre, String descripcion) {
-        this.nombre = nombre;
-        this.descripcion = descripcion;
-    }
-
-    // Getters y setters de todos los campos
-
-    public int getEjercicioId() {
-        return ejercicioId;
-    }
-
-    public void setEjercicioId(int ejercicioId) {
-        this.ejercicioId = ejercicioId;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
 }
