@@ -12,12 +12,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 public class Logro {
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "recompensa_id")
-    private Recompensa recompensa;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long LogroId;
 
     @Column(name = "nombre", length = 30, nullable = false)
     private String nombre;
@@ -27,5 +25,13 @@ public class Logro {
 
     @Column(name = "km_requeridos", nullable = false)
     private double kmRequeridos;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "recompensa_id")
+    private Recompensa recompensa;
+
+    @ManyToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
 }
 

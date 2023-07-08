@@ -16,10 +16,14 @@ public class Asistencia {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "fechaAsistencia",nullable = false)
+    private LocalDateTime fechaAsistencia;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "evento_id", nullable = false)
     private Evento evento;
 
-    @Column(name = "fechaAsistencia",nullable = false)
-    private LocalDateTime fechaAsistencia;
+    @ManyToOne
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
 }
