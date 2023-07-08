@@ -1,7 +1,9 @@
 package com.t1lean.runlife_api.repository;
 
 import com.t1lean.runlife_api.model.Asistencia;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface IAsistenciaRepository extends CrudRepository<Asistencia, Long> {
+@Repository
+public interface IAsistenciaRepository extends JpaRepository<Asistencia, Long> {
 }
