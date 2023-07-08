@@ -1,4 +1,4 @@
 package com.t1lean.runlife_api.controller;
 
-public class EjercicioController {
+public class DiaDietaController {
 }

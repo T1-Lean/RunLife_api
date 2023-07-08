@@ -1,11 +1,12 @@
 package com.t1lean.runlife_api.service;
 
-import com.t1lean.runlife_api.controller.dto.LoginRequest;
 import com.t1lean.runlife_api.exception.InvalidPasswordException;
 import com.t1lean.runlife_api.model.Usuario;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+@Service
 public interface UsuarioService {
     Usuario actualizarUsuario(Long id, Usuario usuarioActualizado);
     Usuario getUserById(Long id);

@@ -33,7 +33,7 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(usuario);
     }
 
-    @GetMapping("/buscarusuario/{id}")
+    @GetMapping("/usuarios/buscarusuario/{id}")
     public ResponseEntity<Usuario> getUserById(@PathVariable Long id) {
         Usuario usuario = usuarioService.getUserById(id);
         return ResponseEntity.ok(usuario);
@@ -45,20 +45,20 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarios);
     }
 
-    @GetMapping("/usuarios/buscar")
+    @GetMapping("/usuarios/buscarusuario/nombre")
     public ResponseEntity<List<Usuario>> searchUsersByName(@RequestParam("nombre") String nombre) {
         List<Usuario> usuarios = usuarioService.searchUsersByName(nombre);
         return ResponseEntity.ok(usuarios);
     }
 
     @Transactional
-    @PostMapping("/crearusuario")
+    @PostMapping("/usuarios/crearusuario")
     public ResponseEntity<Usuario> crearUsuario(@RequestBody Usuario usuario) {
         Usuario nuevoUsuario = usuarioService.crearUsuario(usuario);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
     }
 
-    @PutMapping("/reportarusuario/{id}")
+    @PutMapping("/uruarios/reportarusuario/{id}")
     public ResponseEntity<Usuario> cambiarEstadoReportado(@PathVariable Long id) {
         Usuario usuario = usuarioService.cambiarEstadoReportado(id);
         return ResponseEntity.ok(usuario);
@@ -84,4 +84,3 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
     }
 }
-
