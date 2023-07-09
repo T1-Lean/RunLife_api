@@ -1,4 +1,4 @@
 package com.t1lean.runlife_api.service.ServiceImpl;
 
-public interface IEjercicioServiceImpl {
+public class IEjercicioServiceImpl {
 }

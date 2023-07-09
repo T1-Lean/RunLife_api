@@ -58,7 +58,7 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
     }
 
-    @PutMapping("/uruarios/reportarusuario/{id}")
+    @PutMapping("/usuarios/reportarusuario/{id}")
     public ResponseEntity<Usuario> cambiarEstadoReportado(@PathVariable Long id) {
         Usuario usuario = usuarioService.cambiarEstadoReportado(id);
         return ResponseEntity.ok(usuario);

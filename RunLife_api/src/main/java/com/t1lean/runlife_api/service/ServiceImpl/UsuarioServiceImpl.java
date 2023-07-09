@@ -15,11 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.*;
 
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
@@ -38,7 +33,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         Usuario usuarioExistente = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con el ID: " + id));
       
-        validateUpdate(usuarioActualizado);
+        validateUpdate(usuarioActualizado, id);
       
         if (usuarioActualizado.getNombre() != null) {
             usuarioExistente.setNombre(usuarioActualizado.getNombre());
@@ -156,7 +151,17 @@ public class UsuarioServiceImpl implements UsuarioService {
             if (usuarioExistenteByUsername.isPresent() && !usuarioExistenteByUsername.get().getId().equals(id)) {
                 throw new ValidationException("El nombre de usuario ya está en uso");
             }
+            if (usuarioActualizado.getUsername() != null && usuarioActualizado.getUsername().isEmpty()) {
+                throw new ValidationException("La username no puede estar vacío");
+            }
+        }
 
+        if (usuarioActualizado.getEdad() <= 0) {
+            throw new ValidationException("La edad debe ser un valor positivo y mayor a 0");
+        }
+
+        if (usuarioActualizado.getPassword() != null && usuarioActualizado.getPassword().isEmpty()) {
+            throw new ValidationException("La contraseña no puede estar vacía");
         }
     }
 }
