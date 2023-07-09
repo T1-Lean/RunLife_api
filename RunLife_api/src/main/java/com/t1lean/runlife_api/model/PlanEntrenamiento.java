@@ -8,12 +8,13 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "CategoriaEjercicio")
-public class CategoriaEjercicio {
+@Table(name = "PlanEntrenamiento")
+public class PlanEntrenamiento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long CategoriaEjercicioId;
+    private Long PlanEntrenamientoId;
 
-    @Column(name = "nombre", length = 30, nullable = false)
-    private String nombre;;
+    @OneToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
 }
